@@ -1,0 +1,314 @@
+import React from "react";
+
+const ShopByBrand = () => {
+  return (
+    <div className="p-6 pt-0 mt-4 sm:mt-8">
+      {/* Section Title with Navigation Buttons */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold text-gray-800 text-left">Shop by Brand</h2>
+        <div className="flex space-x-4 justify-end w-full">
+          <button  className="bg-blue-600 text-white p-1 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-10 text-base">
+            &lt;
+          </button>
+          <button  className="bg-blue-600 text-white p-1 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-10 text-base">
+            &gt;
+          </button>
+        </div>
+      </div>
+
+      {/* Container for Categories */}
+      <div className="flex space-x-6 overflow-hidden">
+        {/* Electronics Category */}
+        <div
+          className="bg-white rounded-lg shadow-md p-4 sm:p-2 mb-8"
+          style={{ width: "320px" }}
+        >
+          <h3 className="text-lg font-bold text-gray-800 mb-2 text-left">
+            Electronics
+          </h3>
+
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {/* Brand Card 1 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Samsung</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp28KNbT_76szjMx8V-F90zVouUYg3BblgtA&s"
+                alt="Samsung"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 2 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Hisense</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi53fo2wu3QpZaDprzmkcnHqYD-bBggB8XCA&s"
+                alt="Hisense"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 3 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Hotpoint</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBhdIe9_9s6m16XcdVRGBWuY_KSYs7i_7NuA&s"
+                alt="Hotpoint"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 4 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Ramtoms</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZzJT_PVLSvhuy9T50-zhYmLlmaCf1_fvq6w&s"
+                alt="Ramtoms"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+          </div>
+
+          <div className="text-center">
+            <button className="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 transition-colors relative z-10">
+              See More Brands
+            </button>
+          </div>
+        </div>
+
+        {/* Cleaning Category */}
+        <div
+          className="bg-white rounded-lg shadow-md p-4 sm:p-2 mb-8"
+          style={{ width: "320px" }}
+        >
+          <h3 className="text-lg font-bold text-gray-800 mb-2 text-left">
+            Cleaning
+          </h3>
+
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {/* Brand Card 1 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Harpic</h3>
+              <img
+                src="https://cdn.mafrservices.com/pim-content/KEN/media/product/13336/13336_main.jpg?im=Resize=480"
+                alt="Harpic"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 2 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Domestos</h3>
+              <img
+                src="https://cdn.nestleprofessional.com/sites/g/files/dnignj491/files/2022-04/Domestos%20Power%20Fresh%20Bleach.png"
+                alt="Domestos"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 3 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Dettol</h3>
+              <img
+                src="https://ke.jumia.is/unsafe/fit-in/500x500/filters:fill(white)/product/99/284556/1.jpg?3923"
+                alt="Dettol"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 4 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Jik</h3>
+              <img
+                src="https://shop.advance-africa.com/wp-content/uploads/2022/04/jik-750ml-multipurpose-disinfectant-bleach.jpg"
+                alt="Jik"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+          </div>
+
+          <div className="text-center">
+            <button className="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 transition-colors relative z-10">
+              See More Brands
+            </button>
+          </div>
+        </div>
+
+        {/* Pantry Category */}
+        <div
+          className="bg-white rounded-lg shadow-md p-4 sm:p-2 mb-8"
+          style={{ width: "320px" }}
+        >
+          <h3 className="text-lg font-bold text-gray-800 mb-2 text-left">
+            Pantry
+          </h3>
+
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {/* Brand Card 1 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Nestle</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlWGy_1xTt4DPVJ_vKNHPLk8lzWs58hpLgMQ&s"
+                alt="Nestle"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 2 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Kraft</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHZCsh4yRSozxWSSTj6_a7dk6n1zTHquw9lA&s"
+                alt="Kraft"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 3 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Heinz</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkXjBZvAELEgDrDZyn2pdA7eqFSyDjs9yaLg&s"
+                alt="Heinz"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 4 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Unilever</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRy5MwBDdm13JXwIFj70tOPcPPtNxeT6X1_8Q&s"
+                alt="Unilever"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+          </div>
+
+          <div className="text-center">
+            <button className="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 transition-colors relative z-10">
+              See More Brands
+            </button>
+          </div>
+        </div>
+
+        {/* Personal Care Category */}
+        <div
+          className="bg-white rounded-lg shadow-md p-4 sm:p-2 mb-8"
+          style={{ width: "320px" }}
+        >
+          <h3 className="text-lg font-bold text-gray-800 mb-2 text-left">
+            Personal Care
+          </h3>
+
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {/* Brand Card 1 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Nivea</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTj-cWyfITyhw-QXjLgMf9dpFqPbhwSH2HRFq1KSHmfGbHUsCggWhF5y1WdbdlbmzWzLmQ&s"
+                alt="Nivea"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 2 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Dove</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmnpUlTHG9t5sI4ysIbPyHz1JrTGgke3_y7A&s"
+                alt="Dove"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 3 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">L'Oréal</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxxfZOw6-b8sEmRbDkz4QDEbXa51gn51nTbyugJ-GkZEPXW93Q-Xmj5qxjRWhWQCjdrQ&s"
+                alt="L'Oréal"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 4 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Olay</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzNxRfGsJ1exyvdglQ6JfdC9H6G0yPaDTY9R2jYNyBEm5BYwdQGb-VtLrMGc9OUhH0&s"
+                alt="Olay"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+          </div>
+
+          <div className="text-center">
+            <button className="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 transition-colors relative z-10">
+              See More Brands
+            </button>
+          </div>
+        </div>
+           {/* Snacks Category */}
+        <div
+          className="bg-white rounded-lg shadow-md p-4 sm:p-2 mb-8"
+          style={{ width: "320px" }}
+        >
+          <h3 className="text-lg font-bold text-gray-800 mb-2 text-left">
+            Snacks
+          </h3>
+
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {/* Brand Card 1 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Lay's</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9vP7B_XeA-wqufmHZ5HvPpGfmgjQqkbg_-g&s"
+                alt="Lay's"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 2 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Pringles</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2Zftx_UaLRV8RRtLbmw9P-4zLHY7t6-JUg&s"
+                alt="Pringles"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 3 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Doritos</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT24BfjJdR7MjrQbFx0mtW5ejroXB_o9HtLQsWoFHK7aLn8CZhTnYYhHv4kZ-DjvX9EdOk&s"
+                alt="Doritos"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+
+            {/* Brand Card 4 */}
+            <div className="bg-gray-100 rounded-lg shadow-md p-3 flex flex-col items-center text-center hover:scale-105 transition-transform">
+              <h3 className="text-sm font-semibold mb-1">Cheetos</h3>
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiOEXNO_aL2nN0vvXUkHzA5g7eOmggUMqW2Q&s"
+                alt="Cheetos"
+                className="w-16 h-16 object-contain"
+              />
+            </div>
+          </div>
+
+          <div className="text-center">
+            <button className="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 transition-colors relative z-10">
+              See More Brands
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ShopByBrand;
