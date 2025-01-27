@@ -4,7 +4,6 @@ import { useSwipeable } from "react-swipeable";
 const ShopByBrands = () => {
   const scrollRef = useRef(null);
 
-  // Function to scroll left
   const scrollLeft = () => {
     scrollRef.current.scrollBy({
       left: -320,
@@ -12,7 +11,6 @@ const ShopByBrands = () => {
     });
   };
 
-  // Function to scroll right
   const scrollRight = () => {
     scrollRef.current.scrollBy({
       left: 320,
@@ -20,10 +18,10 @@ const ShopByBrands = () => {
     });
   };
 
-  // Swipe handlers using react-swipeable
   const handlers = useSwipeable({
     onSwipedLeft: scrollRight,
     onSwipedRight: scrollLeft,
+    trackMouse: true, // Allows swiping with mouse for testing on desktop
   });
 
   return (
@@ -49,23 +47,23 @@ const ShopByBrands = () => {
         </div>
       </div>
 
-      {/* Container for Categories */}
+      {/* Scrollable Brands Section */}
       <div
         {...handlers}
-        className="flex space-x-6 overflow-hidden pb-4"
         ref={scrollRef}
-        style={{ maxWidth: "100%" }}
+        className="flex space-x-6 overflow-x-auto pb-4"
+        style={{ scrollBehavior: "smooth" }}
       >
-        {/* Electronics Category */}
+        {/* Example Category */}
         <div
           className="bg-white rounded-lg shadow-md p-4 sm:p-2 mb-8"
           style={{
             minWidth: "200px",
-            width: "100%", // Use full width by default
-            maxWidth: "280px", // Adjust dynamically
+            maxWidth: "280px",
           }}
         >
-          <h3 className="text-lg font-bold text-gray-800 mb-2 text-left">Electronics</h3>
+          <h3 className="text-lg font-bold text-gray-800 mb-2 text-left">
+            Electronics</h3>
 
           <div className="grid grid-cols-2 gap-2 mb-4">
             {/* Brand Card 1 */}
