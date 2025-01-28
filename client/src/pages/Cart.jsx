@@ -22,7 +22,7 @@ const Cart = () => {
 
         {/* Cart Items */}
         {cartItems.length === 0 ? (
-          <p className="text-center text-gray-700">Your cart is empty!</p>
+          <p className="text-center text-gray-700">Your cart is empty!!</p>
         ) : (
           <div className="space-y-4">
             {cartItems.map((item) => (
