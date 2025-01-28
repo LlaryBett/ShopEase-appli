@@ -1,6 +1,10 @@
 import React, { useRef } from 'react';
+import { useCart } from "../components/context/CartContext";  // Import useCart context
 
 const TopSellers = () => {
+  const { addToCart } = useCart();  // Get the addToCart function from the context
+  const scrollRef = useRef(null);
+
   // Manual product data
   const products = [
     {
@@ -60,7 +64,6 @@ const TopSellers = () => {
       image: "https://images-us.nivea.com/-/media/miscellaneous/media-center-items/a/1/4/245017-web_1010x1180_transparent_png.png",
     },
   ];
-  const scrollRef = useRef(null);
 
   // Function to scroll left
   const scrollLeft = () => {
@@ -78,8 +81,13 @@ const TopSellers = () => {
     });
   };
 
+  // Handle adding product to cart
+  const handleAddToCart = (product) => {
+    addToCart(product);  // Call the addToCart function from CartContext
+  };
+
   return (
-    <div className="p-6 mt-[0px] sm:mt-[0px] pb-20"> {/* Added bottom padding */}
+    <div className="p-6 mt-[0px] sm:mt-[0px] pb-20">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-gray-800">Top Sellers</h2>
 
@@ -129,7 +137,10 @@ const TopSellers = () => {
                 </span>
               </div>
             </div>
-            <button className="bg-blue-500 text-white font-semibold py-1 px-2 rounded-lg hover:bg-blue-600 transition-colors text-xs sm:text-base">
+            <button
+              onClick={() => handleAddToCart(product)} // Add product to cart
+              className="bg-blue-500 text-white font-semibold py-1 px-2 rounded-lg hover:bg-blue-600 transition-colors text-xs sm:text-base"
+            >
               Add to Cart
             </button>
           </div>
