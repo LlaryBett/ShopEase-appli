@@ -4,7 +4,7 @@ import Header from "./components/Header"; // Correct import for Header component
 import HomePage from "./pages/HomePage"; // Correct import for HomePage
 import Account from "./pages/Account"; // Correct import for Account page
 import Cart from "./pages/Cart"; // Correct import for Cart page
-import { CartProvider } from "./components/Context/CartContext"; // Ensure casing matches the actual file name
+import { CartProvider } from "../components/Context/CartContext"; // Ensure casing matches the actual file name
 
 const App = () => {
   return (
