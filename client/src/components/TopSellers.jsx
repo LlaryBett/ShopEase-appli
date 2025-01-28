@@ -1,11 +1,11 @@
-import React, { useRef } from 'react';
-import { useCart } from "./context/CartContext";  // Import useCart context
+import React, { useRef } from "react";
+import { useCart } from "./Context/CartContext"; // Ensure the correct file path
 
 const TopSellers = () => {
-  const { addToCart } = useCart();  // Get the addToCart function from the context
+  const { addToCart } = useCart(); // Get the addToCart function from context
   const scrollRef = useRef(null);
 
-  // Manual product data
+  // Product data
   const products = [
     {
       id: 1,
@@ -30,14 +30,14 @@ const TopSellers = () => {
     },
     {
       id: 4,
-      name: "Man U kit 24/25",
+      name: "Man U Kit 24/25",
       wasPrice: "$150",
       isPrice: "$125",
       image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9WD8JjjLEEctTKhiZfAsQ1Q-lV4i_LZlH-g&s",
     },
     {
       id: 5,
-      name: "Infinix Hot50 pro",
+      name: "Infinix Hot50 Pro",
       wasPrice: "$150",
       isPrice: "$125",
       image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPstiyOWEeKNJPemF4EVBdmpFyir9aNw5A6Q&s",
@@ -51,7 +51,7 @@ const TopSellers = () => {
     },
     {
       id: 7,
-      name: "Vitron Led tv 43'",
+      name: "Vitron LED TV 43'",
       wasPrice: "$150",
       isPrice: "$125",
       image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPVCqL_oWmWaSiQ7t8ZCRURIkQSjSqpsFbuQ&s",
@@ -65,81 +65,64 @@ const TopSellers = () => {
     },
   ];
 
-  // Function to scroll left
+  // Scroll functions
   const scrollLeft = () => {
-    scrollRef.current.scrollBy({
-      left: -300,
-      behavior: "smooth",
-    });
+    scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
   };
 
-  // Function to scroll right
   const scrollRight = () => {
-    scrollRef.current.scrollBy({
-      left: 300,
-      behavior: "smooth",
-    });
-  };
-
-  // Handle adding product to cart
-  const handleAddToCart = (product) => {
-    addToCart(product);  // Call the addToCart function from CartContext
+    scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
   };
 
   return (
-    <div className="p-6 mt-[0px] sm:mt-[0px] pb-20">
+    <div className="p-6 pb-20">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-gray-800">Top Sellers</h2>
-
-        {/* Navigation Buttons */}
         <div className="flex space-x-2">
           <button
             onClick={scrollLeft}
-            className="bg-blue-600 text-white p-1 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-10 text-base"
+            aria-label="Scroll Left"
+            className="bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition duration-200"
           >
-            &lt; {/* Left arrow */}
+            &lt;
           </button>
           <button
             onClick={scrollRight}
-            className="bg-blue-600 text-white p-1 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-10 text-base"
+            aria-label="Scroll Right"
+            className="bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition duration-200"
           >
-            &gt; {/* Right arrow */}
+            &gt;
           </button>
         </div>
       </div>
 
-      {/* Product List */}
       <div
         ref={scrollRef}
         className="flex gap-4 overflow-x-auto hide-scrollbar"
-        style={{ maxHeight: "auto", overflowY: "hidden", scrollbarWidth: "none" }}
+        style={{ maxHeight: "auto", overflowY: "hidden" }}
       >
         {products.map((product) => (
           <div
             key={product.id}
-            className="bg-gray-100 rounded-lg shadow-md p-3 w-32 sm:w-40 md:w-48 flex-shrink-0 flex flex-col justify-between hover:scale-105 transition-transform duration-300"
+            className="bg-gray-100 rounded-lg shadow-md p-4 w-40 flex-shrink-0 flex flex-col justify-between hover:scale-105 transition-transform duration-300"
           >
-            <div>
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-auto object-contain rounded-md mb-2"
-              />
-              <h3 className="text-sm sm:text-lg font-semibold mb-1">
-                {product.name}
-              </h3>
-              <div className="mb-2">
-                <span className="text-gray-500 line-through mr-1 text-xs sm:text-sm">
-                  {product.wasPrice}
-                </span>
-                <span className="text-green-600 font-bold text-xs sm:text-sm">
-                  {product.isPrice}
-                </span>
-              </div>
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-40 object-contain rounded-md mb-2"
+            />
+            <h3 className="text-sm font-semibold">{product.name}</h3>
+            <div className="mb-2">
+              <span className="text-gray-500 line-through text-xs mr-2">
+                {product.wasPrice}
+              </span>
+              <span className="text-green-600 font-bold text-sm">
+                {product.isPrice}
+              </span>
             </div>
             <button
-              onClick={() => handleAddToCart(product)} // Add product to cart
-              className="bg-blue-500 text-white font-semibold py-1 px-2 rounded-lg hover:bg-blue-600 transition-colors text-xs sm:text-base"
+              onClick={() => addToCart(product)}
+              className="bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition duration-200 text-sm"
             >
               Add to Cart
             </button>

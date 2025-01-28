@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
-import { useCart } from "../components/context/CartContext";
+import { useCart } from "../components/Context/CartContext"; // Ensure this matches the actual file path
 
 const Cart = () => {
   const { cartItems, removeFromCart, calculateTotal } = useCart();
@@ -22,7 +22,7 @@ const Cart = () => {
 
         {/* Cart Items */}
         {cartItems.length === 0 ? (
-          <p className="text-center text-gray-700">Your cart is empty!!</p>
+          <p className="text-center text-gray-700">Your cart is empty!</p>
         ) : (
           <div className="space-y-4">
             {cartItems.map((item) => (
@@ -32,12 +32,12 @@ const Cart = () => {
               >
                 <div>
                   <h3 className="font-semibold text-lg">{item.name}</h3>
-                  <p className="text-sm text-gray-500">Price: Ksh{item.price}</p>
+                  <p className="text-sm text-gray-500">Price: Ksh {item.price}</p>
                   <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                 </div>
                 <div className="flex items-center space-x-4">
                   <p className="text-lg font-semibold">
-                    Ksh{(item.price * item.quantity).toFixed(2)}
+                    Ksh {(item.price * item.quantity).toFixed(2)}
                   </p>
                   <button
                     onClick={() => removeFromCart(item.id)}
@@ -55,7 +55,7 @@ const Cart = () => {
         {cartItems.length > 0 && (
           <div className="mt-6 flex justify-between items-center">
             <h2 className="text-xl font-semibold">Total:</h2>
-            <p className="text-2xl font-bold">Ksh{calculateTotal()}</p>
+            <p className="text-2xl font-bold">Ksh {calculateTotal()}</p>
           </div>
         )}
 

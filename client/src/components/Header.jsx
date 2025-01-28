@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaSearch, FaHome, FaShoppingCart, FaUser, FaList, FaCommentDots, FaAngleDown, FaHeart } from "react-icons/fa";
-import { useCart } from "./context/CartContext"; // Import useCart hook
+ // Correct imports
+import { useCart } from "../components/Context/CartContext";
+// Import useCart hook
 
 const Header = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -125,7 +127,7 @@ const Header = () => {
     <div className="flex justify-between items-center p-[10px]">
       {['Home', 'Categories', 'Messages', 'Cart', 'Account'].map((item) => (
         <Link
-          to={item === 'Home' ? '/' : item === 'Account' ? '/account' : item === 'Cart' ? '/cart' : '#'}  // Ensure Cart links to /cart
+          to={item === 'Home' ? '/' : item === 'Account' ? '/account' : '#'}
           key={item}
           className="flex flex-col items-center text-white space-y-[5px]"
         >
@@ -150,6 +152,7 @@ const Header = () => {
     </div>
   </div>
 )}
+
 {/* Add Padding at the Bottom of the Main Content */}
 <div className="pb-[80px] sm:pb-[20px]">
   {/* Your main content goes here */}
