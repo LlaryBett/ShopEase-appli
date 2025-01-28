@@ -13,7 +13,7 @@ const Account = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add login or sign-up logic here (e.g., API call to authenticate or register user)
+    // Add login or sign-up logic here (e.g., API call to authenticate or register a new user)
     console.log("Submitting form:", username, password);
   };
 
