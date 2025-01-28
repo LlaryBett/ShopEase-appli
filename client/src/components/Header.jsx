@@ -12,7 +12,7 @@ const Header = () => {
 
   const toggleDropdown = () => setDropdownOpen(!isDropdownOpen);
 
-  // Check if the current page is the homepage
+  // Check if the current page is the homepage home
   const isHomePage = location.pathname === '/';
 
   // Check if the current page is one of the pages where bottom navigation should be visible
