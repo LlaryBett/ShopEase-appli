@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
+import PropTypes from "prop-types"; // Import PropTypes
 
 // Create CartContext
 const CartContext = createContext();
@@ -25,14 +26,23 @@ export const CartProvider = ({ children }) => {
   };
 
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+    return cartItems
+      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .toFixed(2);
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, calculateTotal }}>
+    <CartContext.Provider
+      value={{ cartItems, addToCart, removeFromCart, calculateTotal }}
+    >
       {children}
     </CartContext.Provider>
   );
+};
+
+// Validate props using PropTypes
+CartProvider.propTypes = {
+  children: PropTypes.node.isRequired, // Ensure children is provided and is a React node
 };
 
 // Hook to use the CartContext

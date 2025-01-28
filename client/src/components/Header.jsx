@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaSearch, FaHome, FaShoppingCart, FaUser, FaList, FaCommentDots, FaAngleDown, FaHeart } from "react-icons/fa";
-import { useCart } from "./components/context/CartContext"; // Import useCart hook
+import { useCart } from "./context/CartContext"; // Import useCart hook
 
 const Header = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);

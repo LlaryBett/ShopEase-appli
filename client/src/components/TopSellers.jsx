@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useCart } from "../components/context/CartContext";  // Import useCart context
+import { useCart } from "./context/CartContext";  // Import useCart context
 
 const TopSellers = () => {
   const { addToCart } = useCart();  // Get the addToCart function from the context
