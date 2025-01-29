@@ -128,7 +128,10 @@ const Header = () => {
     <div className="flex justify-between items-center p-[10px]">
       {['Home', 'Categories', 'Messages', 'Cart', 'Account'].map((item) => (
         <Link
-          to={item === 'Home' ? '/' : item === 'Account' ? '/account' : '#'}
+          to={item === 'Home' ? '/' 
+             : item === 'Account' ? '/account' 
+             : item === 'Cart' ? '/cart' 
+             : '#'} // Ensure Cart goes to /cart
           key={item}
           className="flex flex-col items-center text-white space-y-[5px]"
         >
