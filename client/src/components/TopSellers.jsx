@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { useCart } from "../components/Context/CartContext";
+import { useCart } from "./Context/MyCartContext";
 // Ensure the correct file path
 
 const TopSellers = () => {

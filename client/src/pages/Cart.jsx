@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
-import { useCart } from "../components/Context/CartContext"; // Ensure this matches the actual file path
+import { useCart } from "../components/Context/MyCartContext"; // Ensure this matches the actual file path
 
 const Cart = () => {
   const { cartItems, removeFromCart, calculateTotal } = useCart();

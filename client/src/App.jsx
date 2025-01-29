@@ -4,7 +4,7 @@ import Header from "./components/Header"; // Ensure the path is correct
 import HomePage from "./pages/HomePage"; // Ensure the path is correct
 import Account from "./pages/Account"; // Ensure the path is correct
 import Cart from "./pages/Cart"; // Ensure the path is correct
-import { CartProvider } from "./components/Context/CartContext"; // ✅ FIXED IMPORT
+import { CartProvider } from "./components/Context/MyCartContext"; // ✅ FIXED IMPORT
 
 const App = () => {
   return (
