@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaSearch, FaHome, FaShoppingCart, FaUser, FaList, FaCommentDots, FaAngleDown, FaHeart } from "react-icons/fa";
  // Correct imports
-import { useCart } from "../components/Context/CartContext";
+ import { useCart } from "../components/Context/CartContext";
+
 // Import useCart hook
 
 const Header = () => {
