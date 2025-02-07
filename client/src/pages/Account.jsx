@@ -1,30 +1,93 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle, FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
+import PropTypes from "prop-types"; // Import PropTypes
 
-const Account = () => {
-  const [isSignUp, setIsSignUp] = useState(false); // State to toggle between Login and Sign Up
-  const [username, setUsername] = useState(""); // Username can be either email or phone number
+const Account = ({ setIsAuthenticated }) => {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [agreedToTerms, setAgreedToTerms] = useState(false); // State for terms and conditions agreement
-  const [showPassword, setShowPassword] = useState(false); // State to toggle show/hide password
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State to toggle show/hide confirm password
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add login or sign-up logic here (e.g., API call to authenticate or register a new user)
-    console.log("Submitting form:", username, password);
+    setErrorMessage("");
+    setSuccessMessage("");
+  
+    const url = isSignUp ? "http://localhost:5000/api/auth/register" : "http://localhost:5000/api/auth/login";
+    const body = isSignUp
+      ? { username, password, confirmPassword, role: "customer" }
+      : { username, password };
+  
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+  
+      const data = await response.json();
+  
+      // Log the response to check what is being returned
+      console.log("Response Data:", data);
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+  
+      // Handling the Sign Up (Registration) Case
+      if (isSignUp) {
+        if (data && data.message) {
+          setSuccessMessage(data.message);  // Show the success message returned from the backend
+          setTimeout(() => {
+            setIsSignUp(false); // After success, switch to Login form
+          }, 2000);
+        } else {
+          throw new Error("Invalid response data during registration");
+        }
+      }
+      // Handling the Login Case
+      else {
+        if (data && data.token && data.role && data.userId) {
+          setSuccessMessage(data.message);
+  
+          // Save token, role, and userId in localStorage
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('role', data.role);
+          localStorage.setItem('userId', data.userId);  // Store the userId in localStorage
+  
+          setIsAuthenticated(true);
+  
+          // Redirect based on user role
+          if (data.role === "customer") {
+            navigate("/", { replace: true });
+          } else {
+            navigate("/admin-dashboard", { replace: true });
+          }
+        } else {
+          throw new Error("Invalid response data during login");
+        }
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
+      console.error("Error:", error);
+    }
   };
-
+  
   const handleGoogleLogin = () => {
     console.log("Google Login clicked");
-    // Add Google login logic here
   };
 
   const handleFacebookLogin = () => {
     console.log("Facebook Login clicked");
-    // Add Facebook login logic here
   };
 
   return (
@@ -36,6 +99,9 @@ const Account = () => {
 
       {/* Centered Form Container */}
       <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-lg mx-auto mt-16">
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>} {/* Display error message */}
+        {successMessage && <p className="text-green-500">{successMessage}</p>} {/* Display success message */}
+
         {/* Conditional Rendering of Login/SignUp Forms */}
         {isSignUp ? (
           <>
@@ -244,6 +310,11 @@ const Account = () => {
       </div>
     </div>
   );
+};
+
+// Prop validation for setIsAuthenticated
+Account.propTypes = {
+  setIsAuthenticated: PropTypes.func.isRequired,
 };
 
 export default Account;

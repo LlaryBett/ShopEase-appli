@@ -1,129 +1,86 @@
-import React, { useRef } from "react";
-import { useCart } from "./Context/MyCartContext";
-// Ensure the correct file path
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+import { useCart } from "../components/Context/MyCartContext"; // Import useCart hook
 
-const TopSellers = () => {
-  const { addToCart } = useCart(); // Get the addToCart function from context
+const TopSellers = ({ isAuthenticated }) => {
   const scrollRef = useRef(null);
+  const navigate = useNavigate();
+  const { addItemToCart } = useCart(); // Use addItemToCart from CartContext
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Product data
-  const products = [
-    {
-      id: 1,
-      name: "Bluetooth Earbuds",
-      wasPrice: "$100",
-      isPrice: "$80",
-      image: "https://ke.jumia.is/unsafe/fit-in/500x500/filters:fill(white)/product/75/0183971/1.jpg?2092",
-    },
-    {
-      id: 2,
-      name: "Nike SB",
-      wasPrice: "$120",
-      isPrice: "$95",
-      image: "https://static.nike.com/a/images/t_PDP_936_v1/f_auto,q_auto:eco/5e5e9811-9098-466c-a54a-360e0031539b/NIKE+SB+DUNK+LOW+PRO+PRM.png",
-    },
-    {
-      id: 3,
-      name: "Dstv Kit",
-      wasPrice: "$150",
-      isPrice: "$125",
-      image: "https://www.patabay.co.ke/wp-content/uploads/2018/03/1-1-6.jpg",
-    },
-    {
-      id: 4,
-      name: "Man U Kit 24/25",
-      wasPrice: "$150",
-      isPrice: "$125",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9WD8JjjLEEctTKhiZfAsQ1Q-lV4i_LZlH-g&s",
-    },
-    {
-      id: 5,
-      name: "Infinix Hot50 Pro",
-      wasPrice: "$150",
-      isPrice: "$125",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPstiyOWEeKNJPemF4EVBdmpFyir9aNw5A6Q&s",
-    },
-    {
-      id: 6,
-      name: "Harpic Toilet Cleaner",
-      wasPrice: "$150",
-      isPrice: "$125",
-      image: "https://cdn.mafrservices.com/pim-content/KEN/media/product/13336/13336_main.jpg?im=Resize=480",
-    },
-    {
-      id: 7,
-      name: "Vitron LED TV 43'",
-      wasPrice: "$150",
-      isPrice: "$125",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPVCqL_oWmWaSiQ7t8ZCRURIkQSjSqpsFbuQ&s",
-    },
-    {
-      id: 8,
-      name: "Nivea Shower Gel",
-      wasPrice: "$150",
-      isPrice: "$125",
-      image: "https://images-us.nivea.com/-/media/miscellaneous/media-center-items/a/1/4/245017-web_1010x1180_transparent_png.png",
-    },
-  ];
+  // Fetch products from the "Top Sellers" section from the backend
+  useEffect(() => {
+    const fetchTopSellers = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/products/section/Top%20Sellers");
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTopSellers();
+  }, []);  // Empty dependency array means it runs once on component mount
 
-  // Scroll functions
-  const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+  const handleAddToCart = (product) => {
+    if (!isAuthenticated) {
+      alert("Please register or log in to continue.");
+      return;
+    }
+
+    // Calling addItemToCart from the CartContext instead of sending POST request directly
+    addItemToCart(product); // Add item to cart via the CartContext
   };
 
-  const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
-  };
+  const scrollLeft = () => scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+  const scrollRight = () => scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="p-6 pb-20">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-gray-800">Top Sellers</h2>
         <div className="flex space-x-2">
-          <button
-            onClick={scrollLeft}
-            aria-label="Scroll Left"
-            className="bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition duration-200"
-          >
+          <button onClick={scrollLeft} className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700">
             &lt;
           </button>
-          <button
-            onClick={scrollRight}
-            aria-label="Scroll Right"
-            className="bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition duration-200"
-          >
+          <button onClick={scrollRight} className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700">
             &gt;
           </button>
         </div>
       </div>
 
-      <div
-        ref={scrollRef}
-        className="flex gap-4 overflow-x-auto hide-scrollbar"
-        style={{ maxHeight: "auto", overflowY: "hidden" }}
-      >
+      <div ref={scrollRef} className="flex gap-4 overflow-x-auto hide-scrollbar">
         {products.map((product) => (
           <div
-            key={product.id}
-            className="bg-gray-100 rounded-lg shadow-md p-4 w-40 flex-shrink-0 flex flex-col justify-between hover:scale-105 transition-transform duration-300"
+            key={product._id}
+            className="bg-gray-100 rounded-lg shadow-md p-3 sm:w-48 w-32 flex-shrink-0 flex flex-col justify-between hover:scale-105 transition-transform duration-300 cursor-pointer"
+            onClick={() => navigate(`/product/${product._id}`, { state: { product } })}
           >
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-40 object-contain rounded-md mb-2"
-            />
-            <h3 className="text-sm font-semibold">{product.name}</h3>
+            <img src={product.image} alt={product.name} className="w-full h-32 object-contain rounded-md mb-2" />
+            <h3 className="text-xs sm:text-sm font-semibold">{product.name}</h3>
             <div className="mb-2">
-              <span className="text-gray-500 line-through text-xs mr-2">
-                {product.wasPrice}
-              </span>
-              <span className="text-green-600 font-bold text-sm">
-                {product.isPrice}
-              </span>
+              <span className="text-gray-500 line-through text-xs mr-2">{product.wasPrice}</span>
+              <span className="text-green-600 font-bold text-xs sm:text-sm">{product.isPrice}</span>
+            </div>
+            <div className="mt-2">
+              <span className="text-yellow-500">{"★".repeat(Math.round(product.rating))}</span>
+              <span className="text-xs text-gray-600"> ({product.reviews.length} reviews)</span>
             </div>
             <button
-              onClick={() => addToCart(product)}
-              className="bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition duration-200 text-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(product); // Use the handleAddToCart function here
+              }}
+              className="bg-blue-500 text-white font-semibold py-1 rounded-md hover:bg-blue-600 transition duration-200 text-xs sm:text-sm"
             >
               Add to Cart
             </button>
@@ -132,6 +89,10 @@ const TopSellers = () => {
       </div>
     </div>
   );
+};
+
+TopSellers.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired, // Validate isAuthenticated as a required boolean
 };
 
 export default TopSellers;
