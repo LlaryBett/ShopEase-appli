@@ -70,7 +70,7 @@ const Account = ({ setIsAuthenticated }) => {
           if (data.role === "customer") {
             navigate("/", { replace: true });
           } else {
-            navigate("/admin-dashboard", { replace: true });
+            navigate("/admin", { replace: true });
           }
         } else {
           throw new Error("Invalid response data during login");

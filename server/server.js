@@ -5,7 +5,9 @@ const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const productRoutes = require('./routes/productRoutes');
-
+const orderRoutes = require('./routes/orderRoutes'); // ✅ Import order routes
+const analyticsRoutes = require('./routes/analyticsRoutes'); // ✅ Import analytics routes
+const addressRoutes = require("./routes/addressRoutes"); // Import 
 // Load environment variables
 dotenv.config();
 
@@ -39,6 +41,9 @@ connectDB();
 app.use('/api/auth', userRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes); // ✅ Add Order Routes
+app.use('/api/analytics', analyticsRoutes); // ✅ Add Analytics Routes
+app.use("/api/addresses", addressRoutes); // Use address routes
 
 // Define a test route
 app.get('/', (req, res) => {

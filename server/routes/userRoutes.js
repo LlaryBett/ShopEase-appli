@@ -2,13 +2,20 @@ const express = require('express');
 const userCtrl = require('../controllers/userCtrl');
 
 const router = express.Router();
-const { verifyToken } = require("../controllers/userCtrl"); 
+const { verifyToken, deleteUser } = require("../controllers/userCtrl"); 
 
 router.post('/register', userCtrl.registerUser);
 router.post('/login', userCtrl.loginUser);
-// Add logout route
 router.post('/logout', userCtrl.logoutUser);
-// Endpoint to verify the token
-router.post("/verify-token", verifyToken);
+router.post('/verify-token', verifyToken);
+
+// Route to get all users
+router.get('/', userCtrl.getAllUsers);
+
+// Route to delete a user
+router.delete('/:id', deleteUser); // ✅ Delete user by ID
+// Route to update a user
+router.put('/:id', userCtrl.updateUser);
+
 
 module.exports = router;

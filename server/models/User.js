@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['admin', 'customer'],
     default: 'customer'
-  },
-});
+  }
+}, { timestamps: true }); // ✅ Added timestamps
 
 module.exports = mongoose.model('User', UserSchema);

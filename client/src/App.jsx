@@ -6,10 +6,19 @@ import Account from "./pages/Account";
 import Cart from "./pages/Cart";
 import Messages from "./pages/Messages";
 import ProductDetails from "./pages/ProductDetails";
-import AddressBook from "./pages/AddressBook"; // ✅ Import AddressBook
-
-import { CartProvider } from "./components/Context/MyCartContext"; // Import CartProvider
+import AddressBook from "./pages/AddressBook";
+import { CartProvider } from "./components/Context/MyCartContext";
 import axios from "axios";
+
+// Import Admin Components
+import AdminDashboard from "./admin/pages/AdminDashboard";
+import UserManagement from "./admin/pages/UserManagement";
+import ProductManagement from "./admin/pages/ProductManagement";
+import OrderManagement from "./admin/pages/OrderManagement";
+import Analytics from "./admin/pages/Analytics";
+import AddressManagement from "./admin/pages/AddressManagement";
+import CategoryManagement from "./admin/pages/CategoryManagement";
+import Settings from "./admin/pages/Settings";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -42,25 +51,29 @@ const App = () => {
   }
 
   return (
-    <CartProvider> {/* Wrap all routes with CartProvider */}
+    <CartProvider>
       <Router>
         <Header isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
         <Routes>
-          <Route 
-            path="/" 
-            element={<HomePage isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />} 
-          />
-          <Route 
-            path="/account" 
-            element={<Account setIsAuthenticated={setIsAuthenticated} />} 
-          />
+          {/* ✅ Customer Routes */}
+          <Route path="/" element={<HomePage isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/account" element={<Account setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/messages" element={<Messages />} />
-          <Route 
-            path="/product/:id" 
-            element={<ProductDetails isAuthenticated={isAuthenticated} />} 
-          />
-          <Route path="/address-book" element={<AddressBook />} />  {/* ✅ New Address Book Route */}
+          <Route path="/product/:id" element={<ProductDetails isAuthenticated={isAuthenticated} />} />
+          <Route path="/address-book" element={<AddressBook />} />
+
+          {/* ✅ Admin Routes - Wraps All Admin Pages */}
+          <Route path="/admin/*" element={<AdminDashboard />}>
+            <Route path="users" element={<UserManagement />} />
+            <Route path="products" element={<ProductManagement />} />
+            <Route path="orders" element={<OrderManagement />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="addresses" element={<AddressManagement />} />
+            <Route path="categories" element={<CategoryManagement />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+
         </Routes>
       </Router>
     </CartProvider>

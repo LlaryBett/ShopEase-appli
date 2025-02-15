@@ -1,304 +1,315 @@
 import React, { useState, useEffect } from "react";
-import { FaPlus, FaEdit, FaTrash, FaCheckCircle } from "react-icons/fa";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash, faPlus, faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 
-const AddressBook = () => {
+const AddressManagement = () => {
   const [addresses, setAddresses] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [currentAddress, setCurrentAddress] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newAddress, setNewAddress] = useState({
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "",
+  });
+  const [editingAddressId, setEditingAddressId] = useState(null);
 
   useEffect(() => {
     fetchAddresses();
   }, []);
 
-  // Fetch addresses from the backend
   const fetchAddresses = async () => {
+    setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/addresses", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      const data = await response.json();
+      const response = await axios.get("/api/addresses");
 
-      // Ensure data is an array
-      if (Array.isArray(data)) {
-        setAddresses(data);
+      // Check if response.data is an array before setting state
+      if (Array.isArray(response.data)) {
+        setAddresses(response.data);
       } else {
-        setAddresses([]); // Set to empty array if invalid data is returned
+        // If API returns something other than an array, handle the error
+        setError("API returned invalid data: Expected an array of addresses.");
+        toast.error("Failed to fetch addresses: Invalid data format.");
+        setAddresses([]); // Ensure addresses is an empty array to prevent .map error
       }
-    } catch (error) {
-      console.error("Error fetching addresses:", error);
-      setAddresses([]); // Ensure it's always an array
+    } catch (err) {
+      setError(err.message || "Failed to fetch addresses");
+      toast.error("Failed to fetch addresses");
+      setAddresses([]); // Ensure addresses is an empty array to prevent .map error
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Open modal for adding/editing an address
-  const handleOpenModal = (address = null) => {
-    setCurrentAddress(address);
-    setShowModal(true);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewAddress((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Delete an address
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this address?")) {
-      try {
-        await fetch(`http://localhost:5000/api/addresses/${id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        fetchAddresses();
-      } catch (error) {
-        console.error("Error deleting address:", error);
-      }
-    }
-  };
-
-  // Set an address as default
-  const handleSetDefault = async (id) => {
+  const handleAddAddress = async () => {
     try {
-      await fetch(`http://localhost:5000/api/addresses/${id}/set-default`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      fetchAddresses();
-    } catch (error) {
-      console.error("Error setting default address:", error);
+      await axios.post("/api/addresses", newAddress);
+      toast.success("Address added successfully!");
+      setNewAddress({ street: "", city: "", state: "", zipCode: "", country: "" }); // Reset the form
+      setShowAddForm(false);
+      fetchAddresses(); // Refresh the address list
+    } catch (err) {
+      setError(err.message || "Failed to add address");
+      toast.error("Failed to add address");
     }
   };
+
+  const handleEditAddress = (id) => {
+    setEditingAddressId(id);
+    // Find the address to edit and pre-populate the newAddress state.
+    const addressToEdit = addresses.find((address) => address._id === id);
+    if (addressToEdit) {
+      setNewAddress({
+        street: addressToEdit.street,
+        city: addressToEdit.city,
+        state: addressToEdit.state,
+        zipCode: addressToEdit.zipCode,
+        country: addressToEdit.country,
+      });
+    }
+  };
+
+  const handleUpdateAddress = async (id) => {
+    try {
+      await axios.put(`/api/addresses/${id}`, newAddress);
+      toast.success("Address updated successfully!");
+      setEditingAddressId(null); // Clear the editing state
+      setNewAddress({ street: "", city: "", state: "", zipCode: "", country: "" }); // Reset the form
+      fetchAddresses(); // Refresh the address list
+    } catch (err) {
+      setError(err.message || "Failed to update address");
+      toast.error("Failed to update address");
+    }
+  };
+
+  const handleDeleteAddress = async (id) => {
+    try {
+      await axios.delete(`/api/addresses/${id}`);
+      toast.success("Address deleted successfully!");
+      fetchAddresses(); // Refresh the address list
+    } catch (err) {
+      setError(err.message || "Failed to delete address");
+      toast.error("Failed to delete address");
+    }
+  };
+
+  const renderAddressList = () => {
+    if (loading) {
+      return <div className="text-center">Loading addresses...</div>;
+    }
+
+    if (error) {
+      return <div className="text-red-500 text-center">Error: {error}</div>;
+    }
+
+    if (!Array.isArray(addresses) || addresses.length === 0) {
+      return <div className="text-center">No addresses found.</div>;
+    }
+
+    return (
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white dark:bg-gray-800 shadow-md rounded-lg">
+          <thead>
+            <tr className="bg-gray-50 dark:bg-gray-700">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                Street
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                City
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                State
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                Zip Code
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                Country
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {addresses.map((address) => (
+              <tr
+                key={address._id}
+                className="hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {address.street}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {address.city}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {address.state}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {address.zipCode}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {address.country}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  {editingAddressId === address._id ? (
+                    <>
+                      <button
+                        onClick={() => handleUpdateAddress(address._id)}
+                        className="text-green-600 hover:text-green-800 mr-2"
+                      >
+                        <FontAwesomeIcon icon={faSave} />
+                      </button>
+                      <button
+                        onClick={() => setEditingAddressId(null)}
+                        className="text-gray-600 hover:text-gray-800"
+                      >
+                        <FontAwesomeIcon icon={faTimes} />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleEditAddress(address._id)}
+                        className="text-indigo-600 hover:text-indigo-800 mr-2"
+                      >
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAddress(address._id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  const renderAddForm = () => (
+    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mt-4">
+      <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">Add New Address</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="street" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Street
+          </label>
+          <input
+            type="text"
+            id="street"
+            name="street"
+            value={newAddress.street}
+            onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          />
+        </div>
+        <div>
+          <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            City
+          </label>
+          <input
+            type="text"
+            id="city"
+            name="city"
+            value={newAddress.city}
+            onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          />
+        </div>
+        <div>
+          <label htmlFor="state" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            State
+          </label>
+          <input
+            type="text"
+            id="state"
+            name="state"
+            value={newAddress.state}
+            onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          />
+        </div>
+        <div>
+          <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Zip Code
+          </label>
+          <input
+            type="text"
+            id="zipCode"
+            name="zipCode"
+            value={newAddress.zipCode}
+            onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          />
+        </div>
+        <div>
+          <label htmlFor="country" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Country
+          </label>
+          <input
+            type="text"
+            id="country"
+            name="country"
+            value={newAddress.country}
+            onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          />
+        </div>
+      </div>
+      <div className="mt-6 flex justify-end">
+        <button
+          onClick={handleAddAddress}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Add Address
+        </button>
+        <button
+          onClick={() => setShowAddForm(false)}
+          className="ml-4 text-gray-600 hover:text-gray-800"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-4">
-      <h2 className="text-2xl font-bold text-center mb-6">📍 Address Book</h2>
-
-      {/* Add New Address Button */}
-      <button
-        onClick={() => handleOpenModal()}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4 flex items-center"
-      >
-        <FaPlus className="mr-2" /> Add New Address
-      </button>
+    <div className="container mx-auto p-6 bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">Address Management</h2>
+        <button
+          onClick={() => setShowAddForm(true)}
+          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          <FontAwesomeIcon icon={faPlus} className="mr-2" />
+          Add New Address
+        </button>
+      </div>
 
       {/* Address List */}
-      <div className="grid gap-4">
-        {Array.isArray(addresses) && addresses.length > 0 ? (
-          addresses.map((address) => (
-            <div key={address._id} className="p-4 border rounded-md shadow-md">
-              <h3 className="font-bold">{address.name}</h3>
-              <p>
-                {address.street}, {address.city}, {address.state}, {address.zip},{" "}
-                {address.country}
-              </p>
-              <p className="text-gray-600">{address.phone}</p>
+      {renderAddressList()}
 
-              <div className="mt-2 flex gap-2">
-                <button
-                  onClick={() => handleOpenModal(address)}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded-md flex items-center"
-                >
-                  <FaEdit className="mr-1" /> Edit
-                </button>
-
-                <button
-                  onClick={() => handleDelete(address._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded-md flex items-center"
-                >
-                  <FaTrash className="mr-1" /> Delete
-                </button>
-
-                {!address.isDefault && (
-                  <button
-                    onClick={() => handleSetDefault(address._id)}
-                    className="bg-green-500 text-white px-3 py-1 rounded-md flex items-center"
-                  >
-                    <FaCheckCircle className="mr-1" /> Set Default
-                  </button>
-                )}
-              </div>
-
-              {address.isDefault && (
-                <p className="text-green-600 font-semibold mt-2">✔ Default Address</p>
-              )}
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 text-center">No addresses found.</p>
-        )}
-      </div>
-
-      {/* Address Modal */}
-      {showModal && (
-        <AddressForm
-          address={currentAddress}
-          closeModal={() => setShowModal(false)}
-          refreshAddresses={fetchAddresses}
-        />
-      )}
+      {/* Add Address Form */}
+      {showAddForm && renderAddForm()}
     </div>
   );
 };
 
-// ================== Address Form (Inside Same File) ==================
-const AddressForm = ({ address, closeModal, refreshAddresses }) => {
-  const [formData, setFormData] = useState(
-    address || { name: "", phone: "", street: "", city: "", state: "", zip: "", country: "" }
-  );
-  const [autocompleteResults, setAutocompleteResults] = useState([]);
-  const [geoapifyApiKey, setGeoapifyApiKey] = useState("b82ccd10fd2f4c1f9f4c975a04107a7d");
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-
-    // Trigger autocomplete only for relevant fields (e.g., street, city)
-    if (name === "street" || name === "city") {
-      fetchAutocompleteResults(value);
-    }
-  };
-
-  const fetchAutocompleteResults = async (text) => {
-    try {
-      const response = await fetch(
-        `https://api.geoapify.com/v1/geocode/autocomplete?text=${text}&apiKey=${geoapifyApiKey}`
-      );
-      const data = await response.json();
-      setAutocompleteResults(data.features);
-    } catch (error) {
-      console.error("Error fetching autocomplete results:", error);
-      setAutocompleteResults([]);
-    }
-  };
-
-  const selectAutocompleteResult = (result) => {
-    // Update form data based on selected result
-    setFormData({
-      ...formData,
-      street: result.properties.address_line1 || "",
-      city: result.properties.city || result.properties.county || "",
-      state: result.properties.state || "",
-      zip: result.properties.postcode || "",
-      country: result.properties.country || "",
-    });
-    setAutocompleteResults([]); // Clear results after selection
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const method = address ? "PUT" : "POST";
-    const url = address
-      ? `http://localhost:5000/api/addresses/${address._id}`
-      : "http://localhost:5000/api/addresses";
-
-    try {
-      await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(formData),
-      });
-      refreshAddresses();
-      closeModal();
-    } catch (error) {
-      console.error("Error saving address:", error);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-xl font-bold mb-4">{address ? "Edit Address" : "Add New Address"}</h2>
-
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone Number"
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="street"
-            placeholder="Street Address"
-            value={formData.street}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-            // AutoComplete
-            list="autocomplete-results" // Link to the datalist
-          />
-          {autocompleteResults && autocompleteResults.length > 0 && (
-            <ul className="absolute z-10 w-full bg-white border rounded-md shadow-md">
-              {autocompleteResults.map((result) => (
-                <li
-                  key={result.properties.place_id}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => selectAutocompleteResult(result)}
-                >
-                  {result.properties.formatted}
-                </li>
-              ))}
-            </ul>
-          )}
-          <input
-            type="text"
-            name="city"
-            placeholder="City"
-            value={formData.city}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="state"
-            placeholder="State"
-            value={formData.state}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="zip"
-            placeholder="Zip Code"
-            value={formData.zip}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="country"
-            placeholder="Country"
-            value={formData.country}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-
-          <div className="flex justify-between mt-4">
-            <button type="button" onClick={closeModal} className="bg-gray-500 text-white px-4 py-2 rounded-md">
-              Cancel
-            </button>
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">
-              {address ? "Update" : "Save"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-export default AddressBook;
+export default AddressManagement;

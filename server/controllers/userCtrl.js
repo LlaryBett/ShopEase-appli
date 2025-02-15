@@ -158,10 +158,73 @@ const verifyToken = async (req, res) => {
   }
 };
 
-// Export all functions
+// Fetch all users
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, 'username role createdAt updatedAt'); // ✅ Explicitly include timestamps
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users", error: error.message });
+  }
+};
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find and delete user by ID
+    const user = await User.findByIdAndDelete(id);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+// Update User Controller
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, role } = req.body;
+
+    // Ensure username and role are provided
+    if (!username || !role) {
+      return res.status(400).json({ message: "Username and role are required" });
+    }
+
+    // Ensure role is either "admin" or "customer"
+    if (!["admin", "customer"].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role. Only "admin" or "customer" are allowed.' });
+    }
+
+    // Find and update the user
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { username, role, updatedAt: Date.now() }, // Ensure updatedAt is modified
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
-  verifyToken, // Ensure all are exported correctly
+  verifyToken,
+  getAllUsers,
+  deleteUser,
+  updateUser // ✅ Export getAllUsers
 };
