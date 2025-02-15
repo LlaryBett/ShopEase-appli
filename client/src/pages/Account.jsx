@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle, FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
 import PropTypes from "prop-types"; // Import PropTypes
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Use environment variable
+
 const Account = ({ setIsAuthenticated }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = useState("");
@@ -15,16 +17,20 @@ const Account = ({ setIsAuthenticated }) => {
   const [successMessage, setSuccessMessage] = useState("");
 
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
     setSuccessMessage("");
-  
-    const url = isSignUp ? "http://localhost:5000/api/auth/register" : "http://localhost:5000/api/auth/login";
+
+    const url = isSignUp
+      ? `${API_BASE_URL}/api/auth/register`
+      : `${API_BASE_URL}/api/auth/login`;
+
     const body = isSignUp
       ? { username, password, confirmPassword, role: "customer" }
       : { username, password };
-  
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -33,20 +39,20 @@ const Account = ({ setIsAuthenticated }) => {
         },
         body: JSON.stringify(body),
       });
-  
+
       const data = await response.json();
-  
+
       // Log the response to check what is being returned
       console.log("Response Data:", data);
-  
+
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong");
       }
-  
+
       // Handling the Sign Up (Registration) Case
       if (isSignUp) {
         if (data && data.message) {
-          setSuccessMessage(data.message);  // Show the success message returned from the backend
+          setSuccessMessage(data.message); // Show the success message returned from the backend
           setTimeout(() => {
             setIsSignUp(false); // After success, switch to Login form
           }, 2000);
@@ -58,14 +64,14 @@ const Account = ({ setIsAuthenticated }) => {
       else {
         if (data && data.token && data.role && data.userId) {
           setSuccessMessage(data.message);
-  
+
           // Save token, role, and userId in localStorage
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('role', data.role);
-          localStorage.setItem('userId', data.userId);  // Store the userId in localStorage
-  
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("role", data.role);
+          localStorage.setItem("userId", data.userId); // Store the userId in localStorage
+
           setIsAuthenticated(true);
-  
+
           // Redirect based on user role
           if (data.role === "customer") {
             navigate("/", { replace: true });
@@ -81,7 +87,7 @@ const Account = ({ setIsAuthenticated }) => {
       console.error("Error:", error);
     }
   };
-  
+
   const handleGoogleLogin = () => {
     console.log("Google Login clicked");
   };
@@ -89,7 +95,6 @@ const Account = ({ setIsAuthenticated }) => {
   const handleFacebookLogin = () => {
     console.log("Facebook Login clicked");
   };
-
   return (
     <div className="min-h-screen bg-gray-100 relative">
       {/* ShopEase Name Positioned Outside the Form Container and Visible Only on Larger Screens */}

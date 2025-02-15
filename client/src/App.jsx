@@ -20,6 +20,9 @@ import AddressManagement from "./admin/pages/AddressManagement";
 import CategoryManagement from "./admin/pages/CategoryManagement";
 import Settings from "./admin/pages/Settings";
 
+// ✅ Use Environment Variable for API URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -28,7 +31,7 @@ const App = () => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .post("http://localhost:5000/api/auth/verify-token", { token })
+        .post(`${API_BASE_URL}/api/auth/verify-token`, { token })
         .then((response) => {
           setIsAuthenticated(response.data.valid);
           if (!response.data.valid) {
@@ -63,7 +66,7 @@ const App = () => {
           <Route path="/product/:id" element={<ProductDetails isAuthenticated={isAuthenticated} />} />
           <Route path="/address-book" element={<AddressBook />} />
 
-          {/* ✅ Admin Routes - Wraps All Admin Pages */}
+          {/* ✅ Admin Routes */}
           <Route path="/admin/*" element={<AdminDashboard />}>
             <Route path="users" element={<UserManagement />} />
             <Route path="products" element={<ProductManagement />} />
