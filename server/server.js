@@ -7,15 +7,21 @@ const cartRoutes = require('./routes/cartRoutes');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes'); // ✅ Import order routes
 const analyticsRoutes = require('./routes/analyticsRoutes'); // ✅ Import analytics routes
-const addressRoutes = require("./routes/addressRoutes"); // Import 
+const addressRoutes = require("./routes/addressRoutes"); // ✅ Import address routes
+
 // Load environment variables
 dotenv.config();
 
 const app = express();
 
 // ✅ Fix CORS Middleware (Corrected Syntax)
+const allowedOrigins = [
+  "http://localhost:5173",  // ✅ Local Dev
+  "https://shop-ease-appli.vercel.app" // ✅ Deployed Frontend
+];
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: allowedOrigins,  // ✅ Apply CORS correctly
   credentials: true
 }));
 
@@ -43,7 +49,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes); // ✅ Add Order Routes
 app.use('/api/analytics', analyticsRoutes); // ✅ Add Analytics Routes
-app.use("/api/addresses", addressRoutes); // Use address routes
+app.use("/api/addresses", addressRoutes); // ✅ Add Address Routes
 
 // Define a test route
 app.get('/', (req, res) => {
