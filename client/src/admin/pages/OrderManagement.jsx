@@ -26,7 +26,7 @@ const OrderManagement = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/api/orders");
+      const response = await axios.get("https://shopease-appli.onrender.com/api/orders");
       setOrders(response.data);
       setFilteredOrders(response.data);
     } catch (error) {
@@ -39,7 +39,7 @@ const OrderManagement = () => {
 
   const openEditModal = async (orderId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/orders/${orderId}`);
+      const response = await axios.get(`https://shopease-appli.onrender.com/api/orders/${orderId}`);
       setEditingOrder(response.data);
       setShowEditModal(true);
     } catch (error) {
@@ -55,7 +55,7 @@ const OrderManagement = () => {
 
   const updateOrder = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/orders/${editingOrder._id}`, editingOrder);
+      await axios.put(`https://shopease-appli.onrender.com/api/orders/${editingOrder._id}`, editingOrder);
       toast.success("Order updated successfully!", { position: "top-right" });
       fetchOrders();
       closeEditModal();
@@ -67,7 +67,7 @@ const OrderManagement = () => {
 
   const updateOrderStatus = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5000/api/orders/${id}`, { status });
+      await axios.put(`https://shopease-appli.onrender.com/api/orders/${id}`, { status });
       setOrders((prevOrders) =>
         prevOrders.map((order) => (order._id === id ? { ...order, status } : order))
       );

@@ -29,7 +29,7 @@ const AddressManagement = () => {
     const fetchAddresses = async () => {
         setLoading(true);
         try {
-            const response = await axios.get("http://localhost:5000/api/addresses");
+            const response = await axios.get("https://shopease-appli.onrender.com/api/addresses");
             if (Array.isArray(response.data)) {
                 setAddresses(response.data);
             } else {
@@ -68,7 +68,7 @@ const AddressManagement = () => {
 
     const handleAddAddress = async () => {
         try {
-            await axios.post("http://localhost:5000/api/addresses", newAddress);
+            await axios.post("https://shopease-appli.onrender.com/api/addresses", newAddress);
             toast.success("Address added successfully!");
             setNewAddress({ street: "", city: "", county: "", zipCode: "", country: "Kenya", pickupStations: [] });
             setShowAddForm(false);
@@ -96,7 +96,7 @@ const AddressManagement = () => {
 
     const handleUpdateAddress = async (id) => {
         try {
-            await axios.put(`http://localhost:5000/api/addresses/${id}`, newAddress);
+            await axios.put(`https://shopease-appli.onrender.com/api/addresses/${id}`, newAddress);
             toast.success("Address updated successfully!");
             setEditingAddressId(null);
             setNewAddress({ street: "", city: "", county: "", zipCode: "", country: "Kenya", pickupStations: [] });
@@ -108,7 +108,7 @@ const AddressManagement = () => {
 
     const handleDeleteAddress = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/addresses/${id}`);
+            await axios.delete(`https://shopease-appli.onrender.com/api/addresses/${id}`);
             toast.success("Address deleted successfully!");
             fetchAddresses();
         } catch (err) {

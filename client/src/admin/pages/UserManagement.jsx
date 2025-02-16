@@ -38,7 +38,7 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/auth");
+      const response = await axios.get("https://shopease-appli.onrender.com/api/auth");
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -48,7 +48,7 @@ const UserManagement = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/auth/${id}`);
+      await axios.delete(`https://shopease-appli.onrender.com/api/auth/${id}`);
       setUsers(users.filter((user) => user._id !== id));
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -64,7 +64,7 @@ const UserManagement = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
+      await axios.post("https://shopease-appli.onrender.com/api/auth/register", {
         username: newUser.username,
         password: newUser.password,
         confirmPassword: newUser.confirmPassword,
@@ -83,7 +83,7 @@ const UserManagement = () => {
     if (!editingUser) return;
 
     try {
-      await axios.put(`http://localhost:5000/api/auth/${editingUser._id}`, editingUser);
+      await axios.put(`https://shopease-appli.onrender.com/api/auth/${editingUser._id}`, editingUser);
       setEditingUser(null);
       setIsModalOpen(false);
       fetchUsers();

@@ -15,7 +15,7 @@ const FeaturedProducts = ({ isAuthenticated }) => {
     const fetchFeaturedProducts = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/products/section/Featured%20Products"
+          "https://shopease-appli.onrender.com/api/products/section/Featured%20Products"
         );
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();

@@ -38,7 +38,7 @@ const ProductManagement = () => {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const response = await axios.get("http://localhost:5000/api/products");
+            const response = await axios.get("https://shopease-appli.onrender.com/api/products");
             setProducts(response.data);
             setFilteredProducts(response.data);
             console.log("Toastify is working well!");
@@ -68,7 +68,7 @@ const ProductManagement = () => {
         if (!validateForm()) return;
 
         try {
-            await axios.post("http://localhost:5000/api/products", newProduct);
+            await axios.post("https://shopease-appli.onrender.com/api/products", newProduct);
             setNewProduct({
                 name: "",
                 description: "",
@@ -95,7 +95,7 @@ const ProductManagement = () => {
     
         const confirmDelete = async () => {
             try {
-                await axios.delete(`http://localhost:5000/api/products/${id}`);
+                await axios.delete(`https://shopease-appli.onrender.com/api/products/${id}`);
                 setProducts(products.filter(product => product._id !== id));
                 toast.success("Product deleted successfully!", { position: "top-right" });
             } catch (error) {
@@ -129,7 +129,7 @@ const ProductManagement = () => {
         console.log("Updating Product:", editingProduct); // Debugging Log
     
         try {
-            await axios.put(`http://localhost:5000/api/products/${editingProduct._id}`, editingProduct);
+            await axios.put(`https://shopease-appli.onrender.com/api/products/${editingProduct._id}`, editingProduct);
             setEditingProduct(null);
             setIsModalOpen(false);
             fetchProducts();

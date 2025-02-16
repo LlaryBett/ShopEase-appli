@@ -14,7 +14,7 @@ const TopSellers = ({ isAuthenticated }) => {
   useEffect(() => {
     const fetchTopSellers = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/products/section/Top%20Sellers");
+        const response = await fetch("https://shopease-appli.onrender.com/api/products/section/Top%20Sellers");
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
         setProducts(data);

@@ -34,7 +34,7 @@ const Analytics = () => {
       const formattedEndDate = moment(dateRange.endDate).format("YYYY-MM-DD");
 
       const response = await axios.get(
-        `http://localhost:5000/api/analytics?startDate=${formattedStartDate}&endDate=${formattedEndDate}`
+        `https://shopease-appli.onrender.com/api/analytics?startDate=${formattedStartDate}&endDate=${formattedEndDate}`
       );
       console.log("Analytics Data:", response.data);
       setAnalytics(response.data);
