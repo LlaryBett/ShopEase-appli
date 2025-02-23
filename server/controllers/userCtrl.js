@@ -1,3 +1,4 @@
+const path = require("path");
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -79,85 +80,102 @@ const registerUser = async (req, res) => {
 
 // Function to login a user
 const loginUser = async (req, res) => {
-  console.log('Login route hit');
+  console.log("Login route hit");
+  console.log("Received login request:", req.body);
 
   try {
     const { username, password } = req.body;
 
     // Check if any field is missing
     if (!username || !password) {
-      return res.status(400).json({ message: 'Please fill all fields' });
+      return res.status(400).json({ message: "Please fill all fields" });
     }
 
     // Find user by username
     const user = await User.findOne({ username });
+
     if (!user) {
-      return res.status(401).json({ message: 'Invalid username or password' });
+      console.log("User not found in database.");
+      return res.status(401).json({ message: "Invalid username or password" });
     }
+
+    // Log password details for debugging
+    console.log("Entered Password:", password);
+    console.log("Stored Hashed Password:", user.password);
 
     // Verify password
     const isValid = await bcrypt.compare(password, user.password);
+    console.log("Password Match:", isValid);
+
     if (!isValid) {
-      return res.status(401).json({ message: 'Invalid username or password' });
+      console.log("Password does not match.");
+      return res.status(401).json({ message: "Invalid username or password" });
     }
 
     // Generate JWT token with role and userId
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.SECRET_KEY, {
-      expiresIn: '1h', // Token expires in 1 hour
-    });
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.SECRET_KEY,
+      { expiresIn: "1h" } // Token expires in 1 hour
+    );
+
+    console.log("User authenticated successfully.");
 
     // Return token, role, userId, and a success message
     res.json({
       token,
       role: user.role,
-      userId: user._id, // Return the userId as well
-      message: 'Logged in successfully',
+      userId: user._id,
+      message: "Logged in successfully",
     });
   } catch (error) {
-    console.error('Error logging in user:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error logging in user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 // Function to handle logout
 const logoutUser = async (req, res) => {
   try {
+    console.log("Logout route hit");
+
     // Since JWT is stateless, we don't need to invalidate it on the server.
-    // Simply return a success message.
-    res.json({ message: 'Logged out successfully' });
+    res.json({ message: "Logged out successfully" });
   } catch (error) {
-    console.error('Error logging out:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error logging out:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 // Function to verify token
-const verifyToken = async (req, res) => {
-  const { token } = req.body;
+const verifyToken = async (req, res, next) => {
+  console.log("🔵 Token verification route hit");
+  console.log("Headers Received:", req.headers);
+
+  const token = req.headers.authorization?.split(" ")[1]; // Extract token
 
   if (!token) {
+    console.log("🔴 No token found in headers!");
     return res.status(400).json({ message: "No token provided" });
   }
 
   try {
-    // Verify token using the secret key
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    console.log("✅ Decoded Token:", decoded);
 
-    // Find the user based on the decoded user ID (from the token)
     const user = await User.findById(decoded.userId);
-
     if (!user) {
+      console.log("🔴 User not found!");
       return res.status(404).json({ message: "User not found" });
     }
 
-    // If user exists and the token is valid
-    return res.json({ valid: true, user });
+    req.user = user; // ✅ Attach user to request object
+    next(); // ✅ Allow the request to proceed to the next middleware/controller
   } catch (error) {
-    // If token is invalid or any other error occurs
-    return res.status(401).json({ valid: false, message: "Invalid or expired token" });
+    console.log("🔴 Token verification failed:", error.message);
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
-
 // Fetch all users
 const getAllUsers = async (req, res) => {
   try {
@@ -217,6 +235,112 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+// Get Admin Profile
+const getAdminProfile = async (req, res) => {
+  try {
+    console.log("🔍 Searching for Admin ID:", req.user.userId);
+
+    // Find admin and exclude password
+    const admin = await User.findById(req.user.userId).select("-password");
+
+    if (!admin || req.user.role !== "admin") {
+      return res.status(403).json({ message: "🚫 Unauthorized" });
+    }
+
+    // Ensure profileImage has a full URL
+    const profileImageUrl = admin.profileImage
+      ? `${req.protocol}://${req.get("host")}${admin.profileImage}`
+      : null;
+
+    console.log("✅ Fetched Admin:", admin);
+
+    // Send updated profile data
+    res.json({
+      _id: admin._id,
+      name: admin.name,
+      email: admin.email,
+      username: admin.username,
+      role: admin.role,
+      profileImage: profileImageUrl, // ✅ Ensure correct URL
+      createdAt: admin.createdAt,
+      updatedAt: admin.updatedAt,
+    });
+  } catch (error) {
+    console.error("❌ Error in getAdminProfile:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+
+
+
+// Update Admin Profile
+const updateAdminProfile = async (req, res) => {
+  try {
+    console.log("✅ Decoded Token:", req.user);
+
+    if (!req.user || !req.user.userId) {
+      return res.status(401).json({ message: "Unauthorized. Please log in." });
+    }
+
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ message: "Unauthorized. Admins only." });
+    }
+
+    const adminId = req.user.userId;
+    console.log("Searching for Admin ID:", adminId);
+
+    const admin = await User.findById(adminId);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found." });
+    }
+
+    console.log("Fetched Admin:", admin);
+
+    const { name, email, password } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ message: "Name and email are required." });
+    }
+
+    // Update fields from request body
+    admin.name = name;
+    admin.email = email;
+
+    // Handle profile image upload
+    if (req.file) {
+      console.log("Uploaded File:", req.file); // Debugging
+
+      // Ensure correct URL format
+      admin.profileImage = `/uploads/${req.file.filename}`;
+
+      console.log("Profile Image Path:", admin.profileImage);
+    }
+
+    // Update password if provided
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      admin.password = await bcrypt.hash(password, salt);
+    }
+
+    await admin.save();
+    console.log("Updated Admin Data:", admin);
+
+    res.json({
+      message: "Profile updated successfully.",
+      user: {
+        name: admin.name,
+        email: admin.email,
+        username: admin.username,
+        profileImage: `${process.env.BASE_URL || "http://localhost:5000"}${admin.profileImage}`, // Full URL
+      },
+    });
+  } catch (error) {
+    console.error("Error updating admin profile:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+
 
 
 module.exports = {
@@ -226,5 +350,7 @@ module.exports = {
   verifyToken,
   getAllUsers,
   deleteUser,
-  updateUser // ✅ Export getAllUsers
+  updateAdminProfile,
+  updateUser,
+  getAdminProfile, // ✅ Added
 };

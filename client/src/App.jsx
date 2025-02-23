@@ -28,25 +28,35 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("🔄 useEffect triggered - Checking token on page reload");
+
     const token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .post(`${API_BASE_URL}/api/auth/verify-token`, { token })
-        .then((response) => {
-          setIsAuthenticated(response.data.valid);
-          if (!response.data.valid) {
-            localStorage.removeItem("token");
-          }
-        })
-        .catch(() => {
-          setIsAuthenticated(false);
-          localStorage.removeItem("token");
-        })
-        .finally(() => setLoading(false));
-    } else {
+    console.log("🔍 Token from localStorage:", token);
+
+    if (!token) {
+      console.log("❌ No token found. User is not authenticated.");
       setIsAuthenticated(false);
       setLoading(false);
+      return;
     }
+
+    axios
+      .get(`${API_BASE_URL}/api/auth/verify-token`, {
+        headers: { Authorization: `Bearer ${token}` }, // ✅ Send token in headers
+      })
+      .then((response) => {
+        console.log("✅ Token verification successful:", response.data);
+        setIsAuthenticated(true);
+      })
+      .catch((error) => {
+        console.error("❌ Token verification failed:", error.response?.data || error);
+        setIsAuthenticated(false);
+        localStorage.removeItem("token"); // ✅ Remove invalid token
+      })
+      .finally(() => {
+        console.log("⏳ Loading state set to false");
+        setLoading(false);
+      });
   }, []);
 
   if (loading) {
@@ -76,7 +86,6 @@ const App = () => {
             <Route path="categories" element={<CategoryManagement />} />
             <Route path="settings" element={<Settings />} />
           </Route>
-
         </Routes>
       </Router>
     </CartProvider>

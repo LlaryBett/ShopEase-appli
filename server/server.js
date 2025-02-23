@@ -1,67 +1,82 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const userRoutes = require('./routes/userRoutes');
-const cartRoutes = require('./routes/cartRoutes');
-const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes'); // ✅ Import order routes
-const analyticsRoutes = require('./routes/analyticsRoutes'); // ✅ Import analytics routes
-const addressRoutes = require("./routes/addressRoutes"); // ✅ Import address routes
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const path = require("path");
 
-// Load environment variables
+const userRoutes = require("./routes/userRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const productRoutes = require("./routes/productRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
+const addressRoutes = require("./routes/addressRoutes");
+
 dotenv.config();
-
 const app = express();
 
-// ✅ Fix CORS Middleware (Corrected Syntax)
 const allowedOrigins = [
-  "http://localhost:5173",  // ✅ Local Dev
-  "https://shop-ease-appli.vercel.app" // ✅ Deployed Frontend
+  "http://localhost:5173",
+  "https://shop-ease-appli.vercel.app",
 ];
 
-app.use(cors({
-  origin: allowedOrigins,  // ✅ Apply CORS correctly
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 
-// Middleware to parse JSON bodies
+// Middleware to parse JSON and log incoming requests
 app.use(express.json());
 
-// ✅ MongoDB Connection with Error Handling
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// 🟢 Log incoming requests for debugging
+app.use((req, res, next) => {
+  console.log(`🔵 Incoming Request: ${req.method} ${req.originalUrl}`);
+  console.log("Headers:", req.headers);
+
+  if (req.method !== "GET") {
+    console.log("Body:", req.body);
+  }
+
+  next();
+});
+
+// 🛠 Connect to MongoDB
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('✅ Connected to MongoDB');
+    console.log("✅ Connected to MongoDB");
   } catch (error) {
-    console.error('❌ Error connecting to MongoDB:', error.message);
-    process.exit(1); // Exit process if connection fails
+    console.error("❌ Error connecting to MongoDB:", error.message);
+    process.exit(1);
   }
 };
 connectDB();
 
-// ✅ Use Routes
-app.use('/api/auth', userRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes); // ✅ Add Order Routes
-app.use('/api/analytics', analyticsRoutes); // ✅ Add Analytics Routes
-app.use("/api/addresses", addressRoutes); // ✅ Add Address Routes
+// 🛠 Register API Routes
+app.use("/api/auth", userRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/addresses", addressRoutes);
 
-// Define a test route
-app.get('/', (req, res) => {
-  res.send('Welcome to the ShopEase server!');
+// 🛠 Test Route
+app.get("/", (req, res) => {
+  res.send("Welcome to the ShopEase server!");
 });
 
-// Error Handling Middleware for Undefined Routes
+// 🛠 Catch-all for undefined routes
 app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+  console.log(`🔴 404 Not Found: ${req.method} ${req.originalUrl}`);
+  res.status(404).json({ message: "Route not found" });
 });
 
-// Start Server
+// 🛠 Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

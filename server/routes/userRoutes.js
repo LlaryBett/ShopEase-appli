@@ -1,21 +1,44 @@
-const express = require('express');
-const userCtrl = require('../controllers/userCtrl');
+const express = require("express");
+const {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getAllUsers,
+  deleteUser,
+  updateUser,
+  updateAdminProfile,
+  getAdminProfile,
+} = require("../controllers/userCtrl");
+
+const { verifyToken, verifyAdmin } = require("../middlewares/authMiddleware");
+const upload = require("../middlewares/uploadsMiddleware"); // Import multer middleware
 
 const router = express.Router();
-const { verifyToken, deleteUser } = require("../controllers/userCtrl"); 
 
-router.post('/register', userCtrl.registerUser);
-router.post('/login', userCtrl.loginUser);
-router.post('/logout', userCtrl.logoutUser);
-router.post('/verify-token', verifyToken);
+// 🟢 Authentication routes
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+router.post("/logout", logoutUser);
 
-// Route to get all users
-router.get('/', userCtrl.getAllUsers);
+// 🟢 Token verification route ✅ Now returns user data
+router.get("/verify-token", verifyToken, (req, res) => {
+  res.json({ valid: true, user: req.user });
+});
 
-// Route to delete a user
-router.delete('/:id', deleteUser); // ✅ Delete user by ID
-// Route to update a user
-router.put('/:id', userCtrl.updateUser);
+// 🟢 User management routes (Protected)
+router.delete("/:id", verifyToken, deleteUser);
+router.put("/:id", verifyToken, updateUser);
 
+// 🟢 Admin profile routes (Protected, Admin-only)
+router.get("/admin/profile", verifyToken, verifyAdmin, getAdminProfile);
+
+// Update profile route with file upload support
+router.put(
+  "/admin/update-profile",
+  verifyToken,
+  verifyAdmin,
+  upload.single("profileImage"), // Handle profile image upload
+  updateAdminProfile
+);
 
 module.exports = router;

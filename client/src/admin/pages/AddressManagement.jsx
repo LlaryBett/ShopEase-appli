@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash, faPlus, faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 import "react-toastify/dist/ReactToastify.css";
-
 
 const AddressManagement = () => {
     const [addresses, setAddresses] = useState([]);
@@ -120,7 +119,8 @@ const AddressManagement = () => {
     const buttonStyle = "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline";
 
     return (
-        <div className="container mx-auto p-6">
+        <div className="container mx-auto p-2 sm:p-4 md:p-6">
+            <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
             <h2 className="text-2xl font-bold mb-4">Address Management</h2>
             <div className="flex justify-between items-center mb-4">
                 <button
@@ -137,9 +137,9 @@ const AddressManagement = () => {
                 <p className="text-red-500">{error}</p>
             ) : (
                 <div className="bg-white shadow-md rounded my-6 overflow-x-auto"> {/* Added overflow-x-auto */}
-                    <table className="min-w-full table-auto">
+                    <table className="w-full table-auto text-xs sm:text-sm">
                         <thead>
-                            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <tr className="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal">
                                 <th className="py-3 px-6 text-left">Street</th>
                                 <th className="py-3 px-6 text-left">City</th>
                                 <th className="py-3 px-6 text-left">County</th>
@@ -246,10 +246,10 @@ const AddressManagement = () => {
                         </div>
 
                         <div className="flex justify-end">
-                            <button onClick={handleAddAddress} className={`${buttonStyle} mr-2`}>
+                            <button onClick={handleAddAddress} className={`${buttonStyle} mr-2 text-xs sm:text-sm`}>
                                 <FontAwesomeIcon icon={faSave} className="mr-2" /> Save
                             </button>
-                            <button onClick={() => setShowAddForm(false)} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                            <button onClick={() => setShowAddForm(false)} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 sm:py-2 sm:px-4 rounded focus:outline-none focus:shadow-outline text-xs sm:text-sm">
                                 <FontAwesomeIcon icon={faTimes} className="mr-2" /> Cancel
                             </button>
                         </div>
@@ -320,7 +320,7 @@ const AddressManagement = () => {
                         </div>
 
                         <div className="flex justify-end">
-                            <button onClick={() => handleUpdateAddress(editingAddressId)} className={`${buttonStyle} mr-2`}>
+                            <button onClick={() => handleUpdateAddress(newAddress._id)} className={`${buttonStyle} mr-2`}>
                                 <FontAwesomeIcon icon={faSave} className="mr-2" /> Update
                             </button>
                             <button onClick={() => setEditingAddressId(null)} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
@@ -330,7 +330,6 @@ const AddressManagement = () => {
                     </div>
                 </div>
             )}
-
         </div>
     );
 };

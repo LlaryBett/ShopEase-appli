@@ -1,6 +1,7 @@
 const express = require("express");
 const { addToCart, getCart, updateCartItem, removeFromCart, clearCart, getCartCount } = require("../controllers/cartCtrl"); // Make sure getCartCount is included here
-const verifyToken = require("../middlewares/authMiddleware");
+const { verifyToken } = require("../middlewares/authMiddleware");
+
 
 const router = express.Router();
 
